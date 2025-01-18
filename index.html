@@ -4,57 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countdown to 1st Syawal and 1st Ramadhan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(to bottom, #d9f7ff, #ffd9f7);
-            text-align: center;
-            color: #333;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            color: #4CAF50;
-        }
-
-        .countdown {
-            font-size: 2em;
-            margin: 10px 0;
-            padding: 20px;
-            background: #f0f8ff;
-            border-radius: 10px;
-            display: inline-block;
-        }
-
-        .celebration {
-            display: none;
-            margin-top: 20px;
-            animation: fadeIn 2s;
-        }
-
-        .celebration img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -69,64 +19,9 @@
         </div>
         <div class="celebration" id="celebration">
             <h2>Selamat Hari Raya Aidilfitri!</h2>
-            <img src="https://example.com/hari-raya-decoration.jpg" alt="Hari Raya Decoration">
+            <img src="images/hari-raya-decoration.png" alt="Hari Raya Decoration">
         </div>
     </div>
-
-    <script>
-        const syawalDate = new Date('2025-04-22T00:00:00'); // Set 1st Syawal date
-        const ramadhanDate = new Date('2025-03-23T00:00:00'); // Set 1st Ramadhan date
-
-        const syawalCountdownEl = document.getElementById('syawal-countdown');
-        const ramadhanCountdownEl = document.getElementById('ramadhan-countdown');
-        const celebrationEl = document.getElementById('celebration');
-
-        function updateCountdown() {
-            const now = new Date();
-
-            const timeToSyawal = syawalDate - now;
-            const timeToRamadhan = ramadhanDate - now;
-
-            if (timeToSyawal > 0) {
-                const days = Math.floor(timeToSyawal / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeToSyawal % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeToSyawal % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeToSyawal % (1000 * 60)) / 1000);
-
-                syawalCountdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            } else {
-                celebrationEl.style.display = 'block';
-                syawalCountdownEl.textContent = 'It's Hari Raya!';
-                confettiEffect();
-            }
-
-            if (timeToRamadhan > 0) {
-                const days = Math.floor(timeToRamadhan / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeToRamadhan % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeToRamadhan % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeToRamadhan % (1000 * 60)) / 1000);
-
-                ramadhanCountdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            } else {
-                ramadhanCountdownEl.textContent = 'It's Ramadhan!';
-            }
-        }
-
-        function confettiEffect() {
-            const confetti = document.createElement('div');
-            confetti.style.position = 'fixed';
-            confetti.style.top = '0';
-            confetti.style.left = '0';
-            confetti.style.width = '100%';
-            confetti.style.height = '100%';
-            confetti.style.pointerEvents = 'none';
-            confetti.style.zIndex = '9999';
-            confetti.style.backgroundImage = 'url("https://example.com/confetti.gif")';
-            confetti.style.backgroundSize = 'cover';
-            document.body.appendChild(confetti);
-        }
-
-        setInterval(updateCountdown, 1000);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
