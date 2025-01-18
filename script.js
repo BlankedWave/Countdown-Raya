@@ -1,39 +1,44 @@
-const syawalDate = new Date('2025-04-22T00:00:00'); // Set 1st Syawal date
-const ramadhanDate = new Date('2025-03-23T00:00:00'); // Set 1st Ramadhan date
-
 const syawalCountdownEl = document.getElementById('syawal-countdown');
 const ramadhanCountdownEl = document.getElementById('ramadhan-countdown');
 const celebrationEl = document.getElementById('celebration');
 
-function updateCountdown() {
-    const now = new Date();
+// Define the dates for 1st Syawal and 1st Ramadhan
+const syawalDate = new Date('2025-04-22T00:00:00'); // Adjust for the actual date
+const ramadhanDate = new Date('2025-03-23T00:00:00'); // Adjust for the actual date
 
-    const timeToSyawal = syawalDate - now;
-    const timeToRamadhan = ramadhanDate - now;
+function startCountdown() {
+    function updateCountdown() {
+        const now = new Date();
 
-    if (timeToSyawal > 0) {
-        const days = Math.floor(timeToSyawal / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeToSyawal % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeToSyawal % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeToSyawal % (1000 * 60)) / 1000);
+        const timeToSyawal = syawalDate - now;
+        const timeToRamadhan = ramadhanDate - now;
 
-        syawalCountdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    } else {
-        celebrationEl.style.display = 'block';
-        syawalCountdownEl.textContent = 'It\'s Hari Raya!';
-        confettiEffect();
+        if (timeToSyawal > 0) {
+            const days = Math.floor(timeToSyawal / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeToSyawal % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeToSyawal % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeToSyawal % (1000 * 60)) / 1000);
+
+            syawalCountdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        } else {
+            celebrationEl.style.display = 'block';
+            syawalCountdownEl.textContent = 'It\'s Hari Raya!';
+            confettiEffect();
+        }
+
+        if (timeToRamadhan > 0) {
+            const days = Math.floor(timeToRamadhan / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeToRamadhan % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeToRamadhan % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeToRamadhan % (1000 * 60)) / 1000);
+
+            ramadhanCountdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        } else {
+            ramadhanCountdownEl.textContent = 'It\'s Ramadhan!';
+        }
     }
 
-    if (timeToRamadhan > 0) {
-        const days = Math.floor(timeToRamadhan / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeToRamadhan % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeToRamadhan % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeToRamadhan % (1000 * 60)) / 1000);
-
-        ramadhanCountdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    } else {
-        ramadhanCountdownEl.textContent = 'It\'s Ramadhan!';
-    }
+    setInterval(updateCountdown, 1000);
 }
 
 function confettiEffect() {
@@ -50,4 +55,4 @@ function confettiEffect() {
     document.body.appendChild(confetti);
 }
 
-setInterval(updateCountdown, 1000);
+startCountdown();
