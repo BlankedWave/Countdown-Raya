@@ -1,27 +1,187 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown to 1st Syawal and 1st Ramadhan</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kiraan Mundur Ramadhan & Raya</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome (jika diperlukan) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+        integrity="sha512-pap6fN5TvS0TQF2+Jx+lxvT+g3KYo9IqcyKH/w9OS/5S7XkKqlKOwQ8wluZEn13EBWbOvEEJsQBXQdM2O8+2VA==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Google Fonts: Lateef untuk font Islamik -->
+  <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+  <style>
+    body, .font-islamik {
+      font-family: 'Lateef', cursive;
+    }
+    /* Animasi warna-warni untuk ucapan */
+    @keyframes rainbow {
+      0%   { color: red; }
+      16%  { color: orange; }
+      33%  { color: yellow; }
+      50%  { color: green; }
+      66%  { color: blue; }
+      83%  { color: indigo; }
+      100% { color: violet; }
+    }
+    .rainbow {
+      animation: rainbow 15s linear infinite;
+    }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Countdown to Hari Raya and Ramadhan</h1>
-        <div>
-            <p>Hari Raya Countdown:</p>
-            <div class="countdown" id="syawal-countdown"></div>
-        </div>
-        <div>
-            <p>Puasa Countdown:</p>
-            <div class="countdown" id="ramadhan-countdown"></div>
-        </div>
-        <div class="celebration" id="celebration">
-            <h2>Selamat Hari Raya Aidilfitri!</h2>
-            <img src="images/hari-raya-decoration.png" alt="Hari Raya Decoration">
-        </div>
+<body class="bg-gradient-to-r from-green-300 to-blue-300 flex flex-col items-center justify-center min-h-screen p-4">
+  <header class="mb-6 text-center">
+    <h1 class="text-5xl font-bold text-white">
+      KIRAAN MUNDUR RAMADHAN & RAYA
+    </h1>
+    <p class="mt-2 text-white text-lg">Kira mundur untuk Ramadhan, Hari Raya Aidilfitri & Hari Raya Aidiladha</p>
+  </header>
+
+  <!-- Kontainer countdown dengan grid responsif -->
+  <div id="countdowns" class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-4xl">
+    <!-- Countdown Ramadhan -->
+    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+      <h2 class="text-2xl font-semibold mb-4 text-green-600">
+        RAMADHAN
+      </h2>
+      <div id="countdown-ramadhan" class="text-3xl text-gray-800 font-islamik"></div>
     </div>
-    <script src="script.js"></script>
+    <!-- Countdown Hari Raya Aidilfitri -->
+    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+      <h2 class="text-2xl font-semibold mb-4 text-blue-600">
+        HARI RAYA AIDILFITRI
+      </h2>
+      <div id="countdown-aidilfitri" class="text-3xl text-gray-800 font-islamik"></div>
+    </div>
+    <!-- Countdown Hari Raya Aidiladha -->
+    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+      <h2 class="text-2xl font-semibold mb-4 text-purple-600">
+        HARI RAYA AIDILADHA
+      </h2>
+      <div id="countdown-aidiladha" class="text-3xl text-gray-800 font-islamik"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-10 border-t pt-4 text-center text-white">
+    <p>© 2025 Muhammad Aqil</p>
+  </footer>
+
+  <!-- Canvas Confetti (jika diperlukan) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <script>
+    // Fungsi untuk menukar format tarikh "DD-MMM-YYYY" ke "YYYY-MM-DD"
+    function convertDate(dateStr) {
+      const parts = dateStr.split("-");
+      if (parts.length !== 3) return null;
+      const day = parts[0];
+      const monthStr = parts[1];
+      const year = parts[2];
+      const months = {
+        Jan: "01", Feb: "02", Mar: "03", Apr: "04",
+        May: "05", Jun: "06", Jul: "07", Aug: "08",
+        Sep: "09", Oct: "10", Nov: "11", Dec: "12"
+      };
+      const month = months[monthStr];
+      if (!month) return null;
+      return `${year}-${month}-${day}`;
+    }
+
+    // Objek untuk menyimpan tarikh sasaran
+    let targetDates = {
+      ramadhan: null,
+      aidilfitri: null,
+      aidiladha: null
+    };
+
+    // Peta ucapan apabila waktu tiba dengan teks dan animasi warna-warni
+    const greetings = {
+      "countdown-ramadhan": "RAMADHAN MUBARAK!",
+      "countdown-aidilfitri": "SELAMAT HARI RAYA AIDILFITRI!",
+      "countdown-aidiladha": "SELAMAT HARI RAYA AIDILADHA!"
+    };
+
+    // Fungsi untuk mencari tarikh berdasarkan tarikh Hijriah dalam data API
+    // targetHijriMonth: "09" untuk Ramadhan, "10" untuk Aidilfitri, "12" untuk Aidiladha
+    // targetHijriDay: "01" untuk Ramadhan & Aidilfitri, "10" untuk Aidiladha
+    function getHijriEvent(data, targetHijriMonth, targetHijriDay) {
+      const prayerTimes = data.prayerTime;
+      for (let i = 0; i < prayerTimes.length; i++) {
+        const hijri = prayerTimes[i].hijri;
+        const parts = hijri.split("-");
+        if (parts[1] === targetHijriMonth && parts[2] === targetHijriDay) {
+          const convertedDate = convertDate(prayerTimes[i].date) || prayerTimes[i].date;
+          return new Date(convertedDate + "T00:00:00");
+        }
+      }
+      return null;
+    }
+
+    // Fungsi untuk mengemaskini countdown bagi satu acara
+    function updateCountdown(elementId, targetDate) {
+      const now = new Date().getTime();
+      const distance = targetDate.getTime() - now;
+      const element = document.getElementById(elementId);
+      
+      if (distance < 0) {
+        // Tambah kelas rainbow untuk animasi warna
+        element.innerHTML = greetings[elementId] || "Sudah tiba!";
+        element.classList.add("rainbow");
+        return;
+      }
+      
+      // Pastikan kelas rainbow dikeluarkan jika countdown masih berjalan
+      element.classList.remove("rainbow");
+      
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      // Paparkan nombor dengan label H, J, M, S dalam huruf besar
+      element.innerHTML = `${days} H : ${hours} J : ${minutes} M : ${seconds} S`;
+    }
+
+    // Fungsi untuk mengemaskini semua countdown setiap saat
+    function startCountdowns() {
+      if (targetDates.ramadhan) updateCountdown('countdown-ramadhan', targetDates.ramadhan);
+      if (targetDates.aidilfitri) updateCountdown('countdown-aidilfitri', targetDates.aidilfitri);
+      if (targetDates.aidiladha) updateCountdown('countdown-aidiladha', targetDates.aidiladha);
+    }
+
+    // Fungsi untuk mendapatkan data tarikh Hijriah dari API e-solat JAKIM
+    function fetchHijriDates() {
+      const apiUrl = "https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=year&zone=WLY01";
+      
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          targetDates.ramadhan = getHijriEvent(data, "09", "01");
+          targetDates.aidilfitri = getHijriEvent(data, "10", "01");
+          targetDates.aidiladha = getHijriEvent(data, "12", "10");
+          
+          // Jika data API tidak mengembalikan tarikh yang diharapkan, gunakan fallback tarikh default
+          if (!targetDates.ramadhan) targetDates.ramadhan = new Date('2025-03-11T00:00:00');
+          if (!targetDates.aidilfitri) targetDates.aidilfitri = new Date('2025-04-10T00:00:00');
+          if (!targetDates.aidiladha) targetDates.aidiladha = new Date('2025-07-19T00:00:00');
+          
+          startCountdowns();
+          setInterval(startCountdowns, 1000);
+        })
+        .catch(err => {
+          console.error("Ralat mendapatkan API e-solat: ", err);
+          targetDates.ramadhan = new Date('2025-03-11T00:00:00');
+          targetDates.aidilfitri = new Date('2025-04-10T00:00:00');
+          targetDates.aidiladha = new Date('2025-07-19T00:00:00');
+          startCountdowns();
+          setInterval(startCountdowns, 1000);
+        });
+    }
+
+    fetchHijriDates();
+  </script>
 </body>
 </html>
